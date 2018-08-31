@@ -206,7 +206,7 @@ module Http2client
 
         if @sock.alpn_protocol != DRAFT
           puts "Failed to negotiate #{DRAFT} via ALPN"
-          exit
+          raise StandardError, "Failed to negotiate #{DRAFT} via ALPN"
         end
       else
         @sock = tcp

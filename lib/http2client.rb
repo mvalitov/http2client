@@ -18,7 +18,7 @@ module Http2client
     DEFAULT_TIMEOUT = 60
 
     def initialize url, args
-      puts "init Request #{url}, #{args.reject{|k, _v| k == :body}}"
+      # puts "init Request #{url}, #{args.reject{|k, _v| k == :body}}"
       @stream_closed = false
       @uri = URI.parse(url)
       @options = {}
@@ -49,7 +49,7 @@ module Http2client
     end
 
     def execute
-      puts 'Sending HTTP 2.0 request'
+      # puts 'Sending HTTP 2.0 request'
       begin
         ::Timeout::timeout(@options[:timeout]){
           if @headers[':method'] == 'GET'
@@ -195,7 +195,7 @@ module Http2client
 
         ctx.alpn_protocols = [DRAFT]
         ctx.alpn_select_cb = lambda do |protocols|
-          puts "ALPN protocols supported by server: #{protocols}"
+          # puts "ALPN protocols supported by server: #{protocols}"
           DRAFT if protocols.include? DRAFT
         end
 
@@ -205,7 +205,7 @@ module Http2client
         @sock.connect
 
         if @sock.alpn_protocol != DRAFT
-          puts "Failed to negotiate #{DRAFT} via ALPN"
+          # puts "Failed to negotiate #{DRAFT} via ALPN"
           raise StandardError, "Failed to negotiate #{DRAFT} via ALPN"
         end
       else

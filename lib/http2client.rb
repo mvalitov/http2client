@@ -45,7 +45,7 @@ module Http2client
       end
       merge_headers(args[:method], args[:headers])
       @payload = args[:body]
-      @response = {headers: nil, data: ''}
+      @response = {headers: nil, data: '', status_code: @response[:headers][':status'].to_i}
     end
 
     def execute
@@ -55,10 +55,14 @@ module Http2client
           if @headers[':method'] == 'GET'
             @stream.headers(@headers, end_stream: true)
           else
-            compressed = @payload.nil? ? nil : gzip(@payload)
+            compressed = false
+            if (@headers['content-encoding'].downcase.include?('gzip')) && !@payload.nil?
+              compressed = true
+            end
+            # compressed = @payload.nil? ? nil : gzip(@payload)
             if compressed
               @stream.headers(@headers, end_stream: false)
-              @stream.data(compressed)
+              @stream.data(gzip(@payload))
             else
               @stream.headers(@headers, end_stream: true)
             end

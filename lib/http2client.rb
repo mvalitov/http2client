@@ -56,9 +56,12 @@ module Http2client
             @stream.headers(@headers, end_stream: true)
           else
             compressed = false
-            if (@headers['content-encoding'].downcase.include?('gzip')) && !@payload.nil?
-              compressed = true
+            if @headers['content-encoding']
+              if (@headers['content-encoding'].downcase.include?('gzip')) && !@payload.nil?
+                compressed = true
+              end
             end
+
             # compressed = @payload.nil? ? nil : gzip(@payload)
             if compressed
               @stream.headers(@headers, end_stream: false)

@@ -45,7 +45,7 @@ module Http2client
       end
       merge_headers(args[:method], args[:headers])
       @payload = args[:body]
-      @response = {headers: nil, data: '', status_code: @response[:headers][':status'].to_i}
+      @response = {headers: nil, data: '', status_code: 0}
     end
 
     def execute
@@ -90,7 +90,7 @@ module Http2client
             else
               @response[:data]
             end
-            {headers: @response[:headers], body: body}
+            {headers: @response[:headers], body: body, status_code: @response[:headers][':status']}
           else
             # TODO
             raise RequestError.new "#{response_status}, #{@response[:data].to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')}"

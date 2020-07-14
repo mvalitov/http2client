@@ -67,10 +67,10 @@ module Http2client
               @stream.data(gzip(@payload))
             else
               if @payload.nil?
+                @stream.headers(@headers, end_stream: true)
+              else
                 @stream.headers(@headers, end_stream: false)
                 @stream.data(@payload)
-              else
-                @stream.headers(@headers, end_stream: true)
               end
             end
           end

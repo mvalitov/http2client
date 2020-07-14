@@ -62,12 +62,16 @@ module Http2client
               end
             end
 
-            # compressed = @payload.nil? ? nil : gzip(@payload)
             if compressed
               @stream.headers(@headers, end_stream: false)
               @stream.data(gzip(@payload))
             else
-              @stream.headers(@headers, end_stream: true)
+              if @payload.nil?
+                @stream.headers(@headers, end_stream: false)
+                @stream.data(@payload)
+              else
+                @stream.headers(@headers, end_stream: true)
+              end
             end
           end
 
@@ -88,7 +92,8 @@ module Http2client
           end
           close
           if response_ok?
-            body = if @response[:headers]["content-encoding"] && @response[:headers]["content-encoding"] == "gzip"
+            body = if @response[:headers]["content-encoding"] &&
+                @response[:headers]["content-encoding"].downcase.include?('gzip')
               inflate(@response[:data])
             else
               @response[:data]

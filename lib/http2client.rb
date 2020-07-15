@@ -8,7 +8,17 @@ require 'zlib'
 
 module Http2client
 
-  class RequestError < RuntimeError 
+  class RequestError < RuntimeError
+    attr_accessor :code
+    attr_accessor :headers
+    attr_accessor :body
+
+    def initialize(message, code, headers, body)
+      super(message)
+      self.code = code
+      self.headers = headers
+      self.body = body
+    end
   end
 
   class Request
@@ -100,8 +110,15 @@ module Http2client
             end
             {headers: @response[:headers], body: body, status_code: @response[:headers][':status']}
           else
-            # TODO
-            raise RequestError.new "#{response_status}, #{@response[:data].to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')}"
+            if @response.nil?
+              raise RequestError.new("no response", response_status, {}, nil)
+            end
+            body = if @response[:headers]["content-encoding"] && @response[:headers]["content-encoding"] == "gzip"
+                     inflate(@response[:data])
+                   else
+                     @response[:data]
+                   end
+            raise RequestError.new("#{response_status}, #{body.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')}", response_status, @response[:headers], body)
           end
         }
       rescue Exception => e

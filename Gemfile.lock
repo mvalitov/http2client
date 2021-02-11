@@ -2,13 +2,13 @@ PATH
   remote: .
   specs:
     http2client (0.1.5)
-      http-2 (~> 0.9.0)
+      http-2 (~> 0.10.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    http-2 (0.9.1)
-    rake (10.5.0)
+    http-2 (0.10.2)
+    rake (13.0.3)
 
 PLATFORMS
   ruby
@@ -16,7 +16,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.16)
   http2client!
-  rake (~> 10.0)
+  rake (~> 13.0)
 
 BUNDLED WITH
    1.16.1

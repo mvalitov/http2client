@@ -113,11 +113,16 @@ module Http2client
             if @response.nil?
               raise RequestError.new("no response", response_status, {}, nil)
             end
-            body = if @response[:headers]["content-encoding"] && @response[:headers]["content-encoding"] == "gzip"
-                     inflate(@response[:data])
-                   else
-                     @response[:data]
-                   end
+            if !@response[:headers].nil?
+              body = if @response[:headers]["content-encoding"] && @response[:headers]["content-encoding"] == "gzip"
+                       inflate(@response[:data])
+                     else
+                       @response[:data]
+                     end
+            else
+              body = ''
+            end
+
             raise RequestError.new("#{response_status}, #{body.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?')}", response_status, @response[:headers], body)
           end
         }
